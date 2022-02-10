@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:13.3-buster
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: sql_user
+      POSTGRES_DB: iut_db
+      POSTGRES_PASSWORD: iut
+volumes:
+  postgres_data:
