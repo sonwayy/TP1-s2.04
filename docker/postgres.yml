@@ -10,6 +10,6 @@ services:
     environment:
       POSTGRES_USER: sql_user
       POSTGRES_DB: iut_db
-      POSTGRES_PASSWORD: iut
+      POSTGRES_PASSWORD: 
 volumes:
   postgres_data:
