@@ -57,13 +57,38 @@ ORDER BY MAX(price) DESc
 LIMIT 1
 
 --chiffre
-WITH mensuel(month, sum)
-    AS 
-    (SELECT DISTINCT FORMAT('%s-%s',EXTRACT(year from date), EXTRACT(month from date)) AS month, SUM(subtotal) FROM orders
-    GROUP BY month
-    ORDER BY month)
-
-SELECT DISTINCT name, month, Sum(subtotal) FROM clients c, mensuel, orders o
+SELECT name, FORMAT('%s-%s',EXTRACT(year from date), EXTRACT(month from date)) AS month, SUM(subtotal) FROM orders o, clients c
 WHERE o.client_id = c.client_id
-GROUP BY month, name 
-ORDER BY name, month
+GROUP BY month, name
+ORDER BY name , month
+
+-- ventes1
+WITH periode1(id,date)
+    AS
+    (SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY date ASC), date FROM orders
+    WHERE date - (interval '1 day') NOT IN (SELECT date FROM orders)),
+
+periode2(id, date)
+AS
+(SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY date ASC), date FROM orders
+WHERE date + (interval '1 day') NOT IN (SELECT date FROM orders))
+
+
+SELECT p1.date AS beginning, p2.date AS ending FROM  periode1 p1, periode2 p2
+WHERE p1.id = p2.id
+ORDER BY beginning
+
+--ventes2
+
+
+
+
+
+
+
+
+WITH t AS ( SELECT date d, ROW_NUMBER() OVER(ORDER BY date) i FROM orders
+GROUP BY date)
+SELECT MIN(d), MAX(d)
+FROM t
+GROUP BY DATEADD(d, -i, d)
